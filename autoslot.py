@@ -8,7 +8,7 @@ __version__ = '2024.12.1'
 __all__ = ['Slots', 'SlotsMeta', 'SlotsPlusDict', 'SlotsPlusDictMeta']
 
 
-def assignments_to_self(method) -> set:
+def _assignments_to_self(method) -> set:
     """Given a method, collect all the attribute names for assignments
     to "self"."""
     # Get the name of the var used to refer to the instance. Usually,
@@ -44,6 +44,14 @@ def assignments_to_self(method) -> set:
         if accessing_self and storing_attribute:
             names.add(b.argval)
     return names
+
+def assignments_to_self(method) -> set:
+    if isinstance(method, list):
+        assignments = set()
+        for m in method:
+            assignments |= _assignments_to_self(m)
+        return assignments
+    return _assignments_to_self(method)
 
 
 class SlotsMeta(type):
