@@ -46,6 +46,8 @@ def _assignments_to_self(method) -> set:
     return names
 
 def assignments_to_self(method) -> set:
+    if isinstance(method, dict):
+        method = method.func
     if isinstance(method, list):
         assignments = set()
         for m in method:
